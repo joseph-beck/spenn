@@ -1,8 +1,15 @@
 use actix_web::{get, HttpResponse, Responder};
 
+use crate::db;
+
 #[get("/api/v1")]
 async fn get_root() -> impl Responder {
     HttpResponse::Ok().body(format!("healthy"))
+}
+
+#[get("/api/v1/mac")]
+async fn get_mac() -> impl Responder {
+    HttpResponse::Ok().json(db::get_mac())
 }
 
 #[cfg(test)]
@@ -23,3 +30,4 @@ mod tests {
         );
     }
 }
+

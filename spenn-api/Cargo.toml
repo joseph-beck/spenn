@@ -8,3 +8,5 @@ actix-web = {version = "4" }
 serde = { version = "1.0", features = ["derive"] }
 env_logger = { version = "*" }
 dotenv = { version = "*" }
+diesel = { version = "2.1.0", features = ["sqlite", "uuid", "r2d2"] }
+uuid = { version = "*", features = ["v4", "fast-rng", "macro-diagnostics", "serde"]}
