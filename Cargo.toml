@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "spenn-api",
+    "spenn-gui/src-tauri",
+]
+
+[workspace.dependencies]
