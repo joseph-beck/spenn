@@ -9,6 +9,7 @@ mod services;
 fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(services::get_root);
     cfg.service(services::list_mac);
+    cfg.service(services::post_mac);
 }
 
 #[actix_web::main]
