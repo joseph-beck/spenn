@@ -27,6 +27,9 @@
     "security": {
       "csp": null
     },
+    "updater": {
+      "active": false
+    },
     "bundle": {
       "active": true,
       "targets": "all",
