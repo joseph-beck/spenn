@@ -4,8 +4,6 @@ use env_logger::init;
 use std::env;
 
 mod db;
-mod models;
-mod schema;
 mod services;
 
 #[actix_web::main]
@@ -13,8 +11,6 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
     init();
-
-    let _conn = db::establish_connection();
 
     HttpServer::new(|| {
         App::new()
