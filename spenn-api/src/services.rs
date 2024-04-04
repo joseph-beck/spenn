@@ -13,14 +13,14 @@ async fn list_mac() -> impl Responder {
 
 #[post("/api/v1/macs")]
 async fn post_mac(body: web::Json<mac::Request>) -> impl Responder {
-    println!("{}", format!("{:?}", body));
+    println!("{:?}, {:?}", body, body.to_model());
 
     HttpResponse::NoContent()
 }
 
 #[cfg(test)]
 mod tests {
-    use actix_web::{post, test, App};
+    use actix_web::{test, App};
 
     use super::*;
 
