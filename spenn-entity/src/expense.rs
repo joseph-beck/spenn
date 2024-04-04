@@ -10,6 +10,9 @@ pub struct Model {
     #[sea_orm(column_type = "Text")]
     pub name: String,
     pub expense_type: u64,
+    pub amount: u64,
+    #[sea_orm(column_type = "Text")]
+    pub description: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -23,7 +26,32 @@ impl Model {
             uuid: Uuid::new_v4(),
             name,
             expense_type: 1,
+            amount: 0,
+            description: "description".to_string(),
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+pub struct Request {
+    pub name: String,
+    pub expense_type: u64,
+    pub amount: u64,
+    pub description: String,
+}
+
+impl Request {
+    pub fn new(name: String) -> Request {
+        Request {
+            name,
+            expense_type: 1,
+            amount: 0,
+            description: "description".to_string(),
+        }
+    }
+
+    pub fn to_model(&self) -> Model {
+        Model::new(self.name.to_string())
     }
 }
 
@@ -36,5 +64,22 @@ mod tests {
         let one = Model::new("one".to_string());
         let two = Model::new("two".to_string());
         assert_ne!(one.uuid, two.uuid)
+    }
+
+    #[test]
+    fn test_request_new() {
+        let one = Request::new("one".to_string());
+        let two = Request::new("two".to_string());
+        assert_ne!(one, two);
+
+        assert!(!(one == two));
+    }
+
+    #[test]
+    fn test_request_to_model() {
+        let one = Request::new("one".to_string());
+        let model = one.to_model();
+
+        assert_ne!(model, Model::new("one".to_string()));
     }
 }

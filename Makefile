@@ -8,3 +8,11 @@ api:
 .phony: gui
 gui:
 	cd spenn-gui && $(NPM) run tauri dev
+
+.phony: test
+test:
+	$(CARGO) test
+
+.phony: fmt
+fmt:
+	$(CARGO) fmt
