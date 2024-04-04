@@ -1,5 +1,7 @@
 use actix_web::{middleware::Logger, web, App, HttpServer};
+use db::sqlite_conn;
 use dotenv::dotenv;
+use spenn_entity::expense;
 use std::env;
 
 mod db;
@@ -16,6 +18,11 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
     env_logger::init();
+
+    let conn = sqlite_conn().await.unwrap();
+    let migrate = expense::Model::migrate(&conn)
+        .await
+        .expect("failed to migrate model");
 
     let host = env::var("HOST").expect("HOST is not set in .env file");
     let port = env::var("PORT").expect("PORT is not set in .env file");

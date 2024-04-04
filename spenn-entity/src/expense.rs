@@ -1,11 +1,13 @@
-use sea_orm::entity::prelude::*;
+use sea_orm::{
+    entity::{self, prelude::*},
+    Schema,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Deserialize, Serialize)]
-#[sea_orm(table_name = "macs")]
+#[sea_orm(table_name = "expenses")]
 pub struct Model {
-    #[sea_orm(primary_key)]
-    #[sea_orm(column_type = "Uuid")]
+    #[sea_orm(primary_key, auto_increment = false)]
     pub uuid: Uuid,
     #[sea_orm(column_type = "Text")]
     pub name: String,
@@ -15,22 +17,43 @@ pub struct Model {
     pub description: String,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
-
-impl ActiveModelBehavior for ActiveModel {}
-
 impl Model {
     pub fn new(name: String) -> Model {
         Model {
             uuid: Uuid::new_v4(),
             name,
             expense_type: 1,
-            amount: 0,
+            amount: 1,
             description: "description".to_string(),
         }
     }
+
+    pub fn default() -> Model {
+        Model {
+            uuid: Uuid::new_v4(),
+            name: "name".to_string(),
+            expense_type: 1,
+            amount: 1,
+            description: "description".to_string(),
+        }
+    }
+
+    pub async fn migrate(db: &DbConn) -> Result<(), DbErr> {
+        let backend = db.get_database_backend();
+        let schema = Schema::new(backend);
+        let create = schema.create_table_from_entity(self::Entity);
+
+        match db.execute(backend.build(&create)).await {
+            Ok(_) => Ok(()),
+            Err(err) => Err(err),
+        }
+    }
 }
+
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
+pub enum Relation {}
+
+impl ActiveModelBehavior for ActiveModel {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Request {
@@ -63,6 +86,13 @@ mod tests {
     fn test_model_new() {
         let one = Model::new("one".to_string());
         let two = Model::new("two".to_string());
+        assert_ne!(one.uuid, two.uuid)
+    }
+
+    #[test]
+    fn test_model_default() {
+        let one = Model::default();
+        let two = Model::default();
         assert_ne!(one.uuid, two.uuid)
     }
 
