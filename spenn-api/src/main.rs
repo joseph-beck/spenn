@@ -1,6 +1,5 @@
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use dotenv::dotenv;
-use serde::ser;
 use std::env;
 
 mod db;

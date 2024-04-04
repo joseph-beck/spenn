@@ -4,6 +4,7 @@ members = [
     "spenn-entity",
     "spenn-gui/src-tauri",
 ]
+resolver = "1"
 
 [workspace.dependencies]
 dotenv = { version = "*" }
