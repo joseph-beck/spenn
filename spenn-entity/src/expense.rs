@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "expenses")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
+    #[sea_orm(column_type = "Text")]
     pub uuid: Uuid,
     #[sea_orm(column_type = "Text")]
     pub name: String,
@@ -41,9 +42,9 @@ impl Model {
     pub async fn migrate(db: &DbConn) -> Result<(), DbErr> {
         let backend = db.get_database_backend();
         let schema = Schema::new(backend);
-        let create = schema.create_table_from_entity(self::Entity);
+        let mut create = schema.create_table_from_entity(self::Entity);
 
-        match db.execute(backend.build(&create)).await {
+        match db.execute(backend.build(create.if_not_exists())).await {
             Ok(_) => Ok(()),
             Err(err) => Err(err),
         }
