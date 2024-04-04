@@ -36,10 +36,7 @@ pub struct Request {
 
 impl Request {
     pub fn new(name: String, address: String) -> Request {
-        Request {
-            name,
-            address,
-        }
+        Request { name, address }
     }
 
     pub fn to_model(&self) -> Model {

@@ -29,6 +29,7 @@ mod tests {
         let app = test::init_service(App::new().service(get_root)).await;
         let req = test::TestRequest::get().uri("/api/v1").to_request();
         let resp = test::call_service(&app, req).await;
+
         assert!(
             resp.status().is_success(),
             "status code {:?}",
@@ -41,6 +42,7 @@ mod tests {
         let app = test::init_service(App::new().service(list_mac)).await;
         let req = test::TestRequest::get().uri("/api/v1/macs").to_request();
         let resp = test::call_service(&app, req).await;
+
         assert!(
             resp.status().is_success(),
             "status code {:?}",
@@ -51,8 +53,18 @@ mod tests {
     #[actix_web::test]
     async fn test_post_mac() {
         let app = test::init_service(App::new().service(post_mac)).await;
-        let req = test::TestRequest::post().uri("/api/v1/macs").to_request();
+
+        let body = mac::Request {
+            name: "Name".to_string(),
+            address: "Address".to_string(),
+        };
+
+        let req = test::TestRequest::post()
+            .uri("/api/v1/macs")
+            .set_json(&body)
+            .to_request();
         let resp = test::call_service(&app, req).await;
+
         assert!(
             resp.status().is_success(),
             "status code {:?}",
