@@ -6,4 +6,4 @@ api:
 
 .phony: gui
 gui:
-	$(CARGO) run --bin spenn-gui
+	cd spenn-gui && npm run tauri dev
