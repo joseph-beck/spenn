@@ -1,4 +1,5 @@
 CARGO ?= cargo
+NPM ?= npm
 
 .phony: api
 api:
@@ -6,4 +7,4 @@ api:
 
 .phony: gui
 gui:
-	cd spenn-gui && npm run tauri dev
+	cd spenn-gui && $(NPM) run tauri dev
