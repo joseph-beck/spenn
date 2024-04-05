@@ -1,7 +1,4 @@
-use sea_orm::{
-    entity::{self, prelude::*},
-    Schema,
-};
+use sea_orm::{entity::prelude::*, Schema};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Deserialize, Serialize)]
@@ -82,6 +79,14 @@ impl Request {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use dotenv::dotenv;
+    use sea_orm::Database;
+    use std::env;
+
+    async fn conn() -> DbConn {
+        let url = env::var("DATABASE_URL").expect("DB_URL is not set in .env file");
+        Database::connect(&url).await.unwrap()
+    }
 
     #[test]
     fn test_model_new() {
@@ -95,6 +100,16 @@ mod tests {
         let one = Model::default();
         let two = Model::default();
         assert_ne!(one.uuid, two.uuid)
+    }
+
+    #[actix_web::test]
+    async fn test_model_migrate() {
+        dotenv().ok();
+        env::set_var("DATABASE_URL", "sqlite::memory:");
+
+        let conn = conn().await;
+        let res = Model::migrate(&conn).await;
+        assert!(res.is_ok())
     }
 
     #[test]
