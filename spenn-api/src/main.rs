@@ -1,4 +1,8 @@
-use actix_web::{middleware::Logger, web, App, HttpServer};
+use actix_web::{
+    middleware::Logger,
+    web::{self},
+    App, HttpServer,
+};
 use db::sqlite_conn;
 use dotenv::dotenv;
 use spenn_entity::expense;
@@ -9,8 +13,12 @@ mod services;
 
 fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(services::get_root);
+    cfg.service(services::get_ping);
     cfg.service(services::list_mac);
     cfg.service(services::post_mac);
+    cfg.service(services::list_expenses);
+    cfg.service(services::get_expense);
+    cfg.service(services::post_expense);
 }
 
 #[actix_web::main]
@@ -20,7 +28,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
 
     let conn = sqlite_conn().await.unwrap();
-    let migrate = expense::Model::migrate(&conn)
+    let _migrate = expense::Model::migrate(&conn)
         .await
         .expect("failed to migrate model");
 

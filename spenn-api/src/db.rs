@@ -1,6 +1,6 @@
 use std::env;
 
-use sea_orm::{prelude::*, Database, Schema};
+use sea_orm::{prelude::*, Database};
 
 pub async fn sqlite_conn() -> Result<DbConn, DbErr> {
     let url = env::var("DATABASE_URL").expect("DB_URL is not set in .env file");
