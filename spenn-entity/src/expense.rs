@@ -84,6 +84,9 @@ mod tests {
     use std::env;
 
     async fn conn() -> DbConn {
+        dotenv().ok();
+        env::set_var("DATABASE_URL", "sqlite::memory:");
+
         let url = env::var("DATABASE_URL").expect("DB_URL is not set in .env file");
         Database::connect(&url).await.unwrap()
     }
@@ -104,9 +107,6 @@ mod tests {
 
     #[actix_web::test]
     async fn test_model_migrate() {
-        dotenv().ok();
-        env::set_var("DATABASE_URL", "sqlite::memory:");
-
         let conn = conn().await;
         let res = Model::migrate(&conn).await;
         assert!(res.is_ok())
