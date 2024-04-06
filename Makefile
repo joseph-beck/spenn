@@ -22,3 +22,10 @@ fmt:
 .phony: migrate
 migrate:
 	$(CARGO) run --bin migrate
+
+.phony: build
+build:
+	$(CARGO) build
+
+.phony: clean
+	$(CARGO) clean

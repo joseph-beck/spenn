@@ -8,6 +8,7 @@ resolver = "1"
 
 [workspace.dependencies]
 dotenv = { version = "*" }
-sea-orm = { version = "0.12", features = [ "sqlx-sqlite", "runtime-tokio-rustls", "macros" ] }
+sea-orm = { version = "=0.12.14", features = [ "sqlx-sqlite", "runtime-tokio-rustls", "macros" ] }
 uuid = { version = "*", features = ["v4", "fast-rng", "macro-diagnostics", "serde"]}
 serde = { version = "1.0", features = ["derive"] }
+chrono = { version = "*" }

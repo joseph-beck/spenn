@@ -1,6 +1,7 @@
-use std::{f32::consts::E, str::FromStr};
+use std::str::FromStr;
 
 use actix_web::{get, post, web, HttpResponse, Responder};
+use chrono::Local;
 use sea_orm::{EntityTrait, QueryOrder};
 use spenn_entity::{expense, mac};
 use uuid::Uuid;
@@ -71,8 +72,12 @@ async fn get_expense(app_state: web::Data<AppState>, path: web::Path<String>) ->
 #[post("/api/v1/expenses")]
 async fn post_expense(
     app_state: web::Data<AppState>,
-    body: web::Json<expense::Request>,
+    mut body: web::Json<expense::Request>,
 ) -> impl Responder {
+    if body.created_at.is_none() {
+        body.created_at = Some(Local::now().naive_local());
+    }
+
     let active_model = body.to_active_model();
     let result = expense::Entity::insert(active_model)
         .exec(app_state.db_pool.get_conn().await.unwrap())
@@ -80,7 +85,7 @@ async fn post_expense(
 
     match result {
         Ok(_) => HttpResponse::NoContent(),
-        Err(_err) => HttpResponse::BadRequest(),
+        Err(err) => HttpResponse::BadRequest(),
     }
 }
 
@@ -245,6 +250,7 @@ mod tests {
             expense_type: 0,
             amount: 0,
             description: "description".to_string(),
+            created_at: Some(Local::now().naive_local()),
         };
 
         let req = test::TestRequest::post()

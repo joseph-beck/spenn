@@ -1,3 +1,4 @@
+use chrono::{DateTime, Local};
 use sea_orm::{entity::prelude::*, Schema, Set};
 use serde::{Deserialize, Serialize};
 
@@ -9,10 +10,14 @@ pub struct Model {
     pub uuid: Uuid,
     #[sea_orm(column_type = "Text")]
     pub name: String,
+    #[sea_orm(column_type = "BigInteger")]
     pub expense_type: i64,
+    #[sea_orm(column_type = "BigInteger")]
     pub amount: i64,
     #[sea_orm(column_type = "Text")]
     pub description: String,
+    #[sea_orm(column_type = "DateTime")]
+    pub created_at: Option<chrono::NaiveDateTime>,
 }
 
 impl Model {
@@ -23,6 +28,7 @@ impl Model {
             expense_type: 1,
             amount: 1,
             description: "description".to_string(),
+            created_at: Some(Local::now().naive_local()),
         }
     }
 
@@ -33,6 +39,7 @@ impl Model {
             expense_type: 1,
             amount: 1,
             description: "description".to_string(),
+            created_at: Some(Local::now().naive_local()),
         }
     }
 
@@ -59,6 +66,7 @@ pub struct Request {
     pub expense_type: i64,
     pub amount: i64,
     pub description: String,
+    pub created_at: Option<chrono::NaiveDateTime>,
 }
 
 impl Request {
@@ -68,6 +76,7 @@ impl Request {
             expense_type: 1,
             amount: 0,
             description: "description".to_string(),
+            created_at: Some(Local::now().naive_local()),
         }
     }
 
@@ -82,6 +91,7 @@ impl Request {
             expense_type: Set(self.expense_type.to_owned()),
             amount: Set(self.amount.to_owned()),
             description: Set(self.description.to_owned()),
+            created_at: Set(self.created_at.to_owned()),
         }
     }
 }
