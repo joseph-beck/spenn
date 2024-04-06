@@ -1,7 +1,10 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
 use spenn_entity::{expense, mac};
 
-use crate::db::{ping_db, sqlite_conn};
+use crate::{
+    db::{ping_db, sqlite_conn},
+    AppState,
+};
 
 #[get("/api/v1")]
 async fn get_root() -> impl Responder {
@@ -9,9 +12,8 @@ async fn get_root() -> impl Responder {
 }
 
 #[get("/api/v1/pings")]
-async fn get_ping() -> impl Responder {
-    let conn = sqlite_conn().await.unwrap();
-    match ping_db(&conn).await {
+async fn get_ping(app_state: web::Data<AppState>) -> impl Responder {
+    match app_state.db_pool.ping().await {
         Ok(_) => HttpResponse::Ok(),
         Err(_err) => HttpResponse::BadRequest(),
     }
@@ -52,7 +54,7 @@ async fn post_expense(body: web::Json<expense::Request>) -> impl Responder {
 
 #[cfg(test)]
 mod tests {
-    use actix_web::{test, App};
+    use actix_web::{test, web::Data, App};
     use dotenv::dotenv;
     use std::env;
 
@@ -76,7 +78,13 @@ mod tests {
         dotenv().ok();
         env::set_var("DATABASE_URL", "sqlite::memory:");
 
-        let app = test::init_service(App::new().service(get_ping)).await;
+        let state = AppState::new().await;
+        let app = test::init_service(
+            App::new()
+                .app_data(Data::new(state.clone()))
+                .service(get_ping),
+        )
+        .await;
         let req = test::TestRequest::get().uri("/api/v1/pings").to_request();
         let resp = test::call_service(&app, req).await;
 
