@@ -1,8 +1,10 @@
 CARGO ?= cargo
 NPM ?= npm
+MAKE ?= make
 
 .phony: api
 api:
+	$(MAKE) migrate
 	$(CARGO) run --bin spenn-api
 
 .phony: gui
@@ -16,3 +18,7 @@ test:
 .phony: fmt
 fmt:
 	$(CARGO) fmt
+
+.phony: migrate
+migrate:
+	$(CARGO) run --bin migrate
