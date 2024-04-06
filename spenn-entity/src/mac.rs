@@ -1,4 +1,4 @@
-use sea_orm::{entity::prelude::*, Schema};
+use sea_orm::{entity::prelude::*, Schema, Set};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Deserialize, Serialize)]
@@ -61,6 +61,14 @@ impl Request {
     pub fn to_model(&self) -> Model {
         Model::new(self.name.to_string(), self.address.to_string())
     }
+
+    pub fn to_active_model(&self) -> ActiveModel {
+        ActiveModel {
+            uuid: Set(Uuid::new_v4().to_owned()),
+            name: Set(self.name.to_owned()),
+            address: Set(self.address.to_owned()),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -82,8 +90,8 @@ mod tests {
     fn test_model_new() {
         let one = Model::new("one".to_string(), "one".to_string());
         let two = Model::new("two".to_string(), "two".to_string());
-        assert_ne!(one.uuid, two.uuid);
 
+        assert_ne!(one.uuid, two.uuid);
         assert!(!(one == two));
     }
 
@@ -91,6 +99,7 @@ mod tests {
     fn test_model_default() {
         let one = Model::default();
         let two = Model::default();
+
         assert_ne!(one.uuid, two.uuid)
     }
 
@@ -98,6 +107,7 @@ mod tests {
     async fn test_model_migrate() {
         let conn = conn().await;
         let res = Model::migrate(&conn).await;
+
         assert!(res.is_ok())
     }
 
@@ -105,8 +115,8 @@ mod tests {
     fn test_request_new() {
         let one = Request::new("one".to_string(), "one".to_string());
         let two = Request::new("two".to_string(), "two".to_string());
-        assert_ne!(one, two);
 
+        assert_ne!(one, two);
         assert!(!(one == two));
     }
 
@@ -116,5 +126,13 @@ mod tests {
         let model = one.to_model();
 
         assert_ne!(model, Model::new("one".to_string(), "one".to_string()));
+    }
+
+    #[test]
+    fn test_request_to_active_model() {
+        let one = Request::new("one".to_string(), "one".to_string());
+        let active_model = one.to_active_model();
+
+        assert_ne!(active_model, ActiveModel::new());
     }
 }

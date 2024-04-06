@@ -1,4 +1,4 @@
-use sea_orm::{entity::prelude::*, Schema};
+use sea_orm::{entity::prelude::*, Schema, Set};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Deserialize, Serialize)]
@@ -9,8 +9,8 @@ pub struct Model {
     pub uuid: Uuid,
     #[sea_orm(column_type = "Text")]
     pub name: String,
-    pub expense_type: u64,
-    pub amount: u64,
+    pub expense_type: i64,
+    pub amount: i64,
     #[sea_orm(column_type = "Text")]
     pub description: String,
 }
@@ -56,8 +56,8 @@ impl ActiveModelBehavior for ActiveModel {}
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Request {
     pub name: String,
-    pub expense_type: u64,
-    pub amount: u64,
+    pub expense_type: i64,
+    pub amount: i64,
     pub description: String,
 }
 
@@ -73,6 +73,16 @@ impl Request {
 
     pub fn to_model(&self) -> Model {
         Model::new(self.name.to_string())
+    }
+
+    pub fn to_active_model(&self) -> ActiveModel {
+        ActiveModel {
+            uuid: Set(Uuid::new_v4().to_owned()),
+            name: Set(self.name.to_owned()),
+            expense_type: Set(self.expense_type.to_owned()),
+            amount: Set(self.amount.to_owned()),
+            description: Set(self.description.to_owned()),
+        }
     }
 }
 
@@ -95,6 +105,7 @@ mod tests {
     fn test_model_new() {
         let one = Model::new("one".to_string());
         let two = Model::new("two".to_string());
+
         assert_ne!(one.uuid, two.uuid)
     }
 
@@ -102,6 +113,7 @@ mod tests {
     fn test_model_default() {
         let one = Model::default();
         let two = Model::default();
+
         assert_ne!(one.uuid, two.uuid)
     }
 
@@ -109,6 +121,7 @@ mod tests {
     async fn test_model_migrate() {
         let conn = conn().await;
         let res = Model::migrate(&conn).await;
+
         assert!(res.is_ok())
     }
 
@@ -116,8 +129,8 @@ mod tests {
     fn test_request_new() {
         let one = Request::new("one".to_string());
         let two = Request::new("two".to_string());
-        assert_ne!(one, two);
 
+        assert_ne!(one, two);
         assert!(!(one == two));
     }
 
@@ -127,5 +140,13 @@ mod tests {
         let model = one.to_model();
 
         assert_ne!(model, Model::new("one".to_string()));
+    }
+
+    #[test]
+    fn test_request_to_active_model() {
+        let one = Request::new("one".to_string());
+        let active_model = one.to_active_model();
+
+        assert_ne!(active_model, ActiveModel::new());
     }
 }
