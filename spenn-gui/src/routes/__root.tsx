@@ -20,6 +20,9 @@ function Root() {
         </Link>{' '}
         <Link to="/spending" className="[&.active]:font-bold">
           Spending
+        </Link>{' '}
+        <Link to="/analytics" className="[&.active]:font-bold">
+          Analytics
         </Link>
       </div>
       <hr />

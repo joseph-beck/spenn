@@ -11,12 +11,14 @@ pub struct Model {
     #[sea_orm(column_type = "Text")]
     pub name: String,
     #[sea_orm(column_type = "BigInteger")]
+    #[serde(rename = "expenseType")]
     pub expense_type: i64,
     #[sea_orm(column_type = "BigInteger")]
     pub amount: i64,
     #[sea_orm(column_type = "Text")]
     pub description: String,
     #[sea_orm(column_type = "DateTime")]
+    #[serde(rename = "createdAt")]
     pub created_at: Option<chrono::NaiveDateTime>,
 }
 
@@ -63,9 +65,11 @@ impl ActiveModelBehavior for ActiveModel {}
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Request {
     pub name: String,
+    #[serde(rename = "expenseType")]
     pub expense_type: i64,
     pub amount: i64,
     pub description: String,
+    #[serde(rename = "createdAt")]
     pub created_at: Option<chrono::NaiveDateTime>,
 }
 

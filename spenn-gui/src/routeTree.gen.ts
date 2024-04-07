@@ -18,6 +18,7 @@ import { Route as rootRoute } from './routes/__root'
 
 const SpendingLazyImport = createFileRoute('/spending')()
 const MacsLazyImport = createFileRoute('/macs')()
+const AnalyticsLazyImport = createFileRoute('/analytics')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 const SpendingUuidLazyImport = createFileRoute('/spending/$uuid')()
@@ -33,6 +34,11 @@ const MacsLazyRoute = MacsLazyImport.update({
   path: '/macs',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/macs.lazy').then((d) => d.Route))
+
+const AnalyticsLazyRoute = AnalyticsLazyImport.update({
+  path: '/analytics',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/analytics.lazy').then((d) => d.Route))
 
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
@@ -63,6 +69,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
+    '/analytics': {
+      preLoaderRoute: typeof AnalyticsLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/macs': {
       preLoaderRoute: typeof MacsLazyImport
       parentRoute: typeof rootRoute
@@ -83,6 +93,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   AboutLazyRoute,
+  AnalyticsLazyRoute,
   MacsLazyRoute,
   SpendingLazyRoute,
   SpendingUuidLazyRoute,
