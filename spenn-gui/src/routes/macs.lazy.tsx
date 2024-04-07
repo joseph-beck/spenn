@@ -4,10 +4,10 @@ import { Mac } from '../types/mac';
 import { LoadingComponent } from '../components/loading';
 
 export const Route = createLazyFileRoute('/macs')({
-  component: () => Macs(),
+  component: () => Page(),
 })
 
-function Macs() {
+function Page() {
   const [macs, setMacs] = useState<Mac[]>();
 
   if (macs == undefined) return <LoadingComponent />
