@@ -3,7 +3,8 @@ import { Expense } from '../types/expense';
 import { LoadingComponent } from '../components/loading';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ExpenseComponent } from '../components/expense';
+import { ExpenseComponent, ExpenseFormComponent } from '../components/expense';
+import { BreadcrumbsComponent } from '../components/breadcrumbs';
 
 export const Route = createLazyFileRoute('/spending')({
   component: () => Page(),
@@ -41,13 +42,21 @@ function Page() {
     <div className="p-2">
       <h3>Hello /spending!</h3>
 
-      {
-        expenses.map((expense: Expense) => (
-          <div key={expense.uuid}>
-            <ExpenseComponent expense={expense} />
-          </div>
-        ))
-      }
+      <BreadcrumbsComponent breadcrumbs={[{ name: "home", href: "/" }]} current={{ name: "spending", href: "/spending"}} />
+
+      <div>
+        {
+          expenses.map((expense: Expense) => (
+            <div key={expense.uuid}>
+              <ExpenseComponent expense={expense} />
+            </div>
+          ))
+        }
+      </div>
+
+      <div className="my-8">
+        <ExpenseFormComponent onSubmit={(expense: Expense) => post(expense)} />
+      </div>
     </div>
   );
 }
