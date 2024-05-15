@@ -2,6 +2,8 @@ use chrono::{DateTime, Local};
 use sea_orm::{entity::prelude::*, Schema, Set};
 use serde::{Deserialize, Serialize};
 
+use crate::Migrator;
+
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Deserialize, Serialize)]
 #[sea_orm(table_name = "expenses")]
 pub struct Model {
@@ -44,8 +46,10 @@ impl Model {
             created_at: Some(Local::now().naive_local()),
         }
     }
+}
 
-    pub async fn migrate(db: &DbConn) -> Result<(), DbErr> {
+impl Migrator for Model {
+    async fn migrate(db: &DbConn) -> Result<(), DbErr> {
         let backend = db.get_database_backend();
         let schema = Schema::new(backend);
         let mut create = schema.create_table_from_entity(self::Entity);

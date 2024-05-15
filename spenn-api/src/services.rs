@@ -93,6 +93,7 @@ async fn post_expense(
 mod tests {
     use actix_web::{test, web::Data, App};
     use dotenv::dotenv;
+    use spenn_entity::Migrator;
     use std::env;
 
     use super::*;

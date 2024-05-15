@@ -1,6 +1,6 @@
 use dotenv::dotenv;
 use sea_orm::Database;
-use spenn_entity::expense;
+use spenn_entity::{expense, Migrator};
 use std::env;
 
 #[actix_web::main]
