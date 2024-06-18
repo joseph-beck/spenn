@@ -34,3 +34,45 @@ impl Model {
 pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+pub struct Request {
+    pub uuid: Uuid,
+    pub name: String,
+    pub password: String,
+    pub created_at: Option<chrono::NaiveDateTime>,
+}
+
+impl Request {
+    pub fn new(name: String, password: String) -> Request {
+        Request {
+            uuid: Uuid::new_v4(),
+            name,
+            password,
+            created_at: Some(Local::now().naive_local()),
+        }
+    }
+
+    pub fn to_model(&self) -> Model {
+        Model {
+            uuid: self.uuid,
+            name: self.name.to_string(),
+            password: self.password.to_string(),
+            created_at: self.created_at,
+        }
+    }
+
+    pub fn to_active_model(&self) -> ActiveModel {
+        ActiveModel {
+            uuid: Set(Uuid::new_v4().to_owned()),
+            name: Set(self.name.to_owned()),
+            password: Set(self.password.to_owned()),
+            created_at: Set(self.created_at.to_owned())
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+}
